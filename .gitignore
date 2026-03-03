@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+tmp_audio/
+models/sign_az.pt
+data/
+*.npz
+*.pyc
