@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Aksesibel: Voice to Text & Bahasa Isyarat</title>
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+
+<body>
+    <main class="container">
+        <h1>Aplikasi Aksesibel</h1>
+
+        <section class="card">
+            <h2>1) Pilih Mode</h2>
+            <label>
+                Mode:
+                <select id="mode">
+                    <option value="tunarungu">Tunarungu (output teks)</option>
+                    <option value="tunanetra">Tunanetra (output suara)</option>
+                </select>
+            </label>
+            <p id="modeHint" class="hint"></p>
+        </section>
+
+        <section class="card">
+            <h2>2) Voice → Text</h2>
+            <div class="row">
+                <button id="btnStartSTT">Mulai Rekam</button>
+                <button id="btnStopSTT" disabled>Stop</button>
+            </div>
+            <textarea id="sttResult" rows="4" placeholder="Hasil transkrip muncul di sini..."></textarea>
+            <audio id="ttsAudio" controls></audio>
+        </section>
+
+        <section class="card">
+            <h2>3) Bahasa Isyarat → (Text / Suara)</h2>
+            <video id="video" autoplay playsinline></video>
+            <div class="row">
+                <button id="btnStartCam">Aktifkan Kamera</button>
+                <button id="btnStopCam" disabled>Matikan Kamera</button>
+            </div>
+            <p class="camOverlay">
+                <strong>Deteksi:</strong> <span id="signResult">-</span>
+                <span id="signConf"></span>
+            </p>
+        </section>
+
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

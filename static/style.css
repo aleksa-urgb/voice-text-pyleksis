@@ -1,0 +1,73 @@
+body {
+    font-family: system-ui, Arial;
+    background: #0b0f17;
+    color: #eaf0ff;
+    margin: 0;
+}
+
+.camOverlay {
+    font-size: 22px;
+}
+
+#signResult {
+    font-size: 56px;
+    font-weight: 800;
+}
+
+.container {
+    max-width: 900px;
+    margin: 24px auto;
+    padding: 0 16px;
+}
+
+.card {
+    background: #121a2a;
+    padding: 16px;
+    border-radius: 12px;
+    margin: 16px 0;
+}
+
+.camOverlay {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.row {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #2a3550;
+    background: #0b0f17;
+    color: #eaf0ff;
+}
+
+video {
+    width: 100%;
+    max-height: 360px;
+    background: #000;
+    border-radius: 12px;
+    margin-top: 10px;
+}
+
+.hint {
+    opacity: 0.9;
+}
+
+select {
+    padding: 8px;
+    border-radius: 10px;
+}
