@@ -4,50 +4,173 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Aksesibel: Voice to Text & Bahasa Isyarat</title>
+    <title>BISINDO — Penerjemah Bahasa Isyarat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="/static/style.css" />
 </head>
 
 <body>
-    <main class="container">
-        <h1>Aplikasi Aksesibel</h1>
 
-        <section class="card">
-            <h2>1) Pilih Mode</h2>
-            <label>
-                Mode:
-                <select id="mode">
-                    <option value="tunarungu">Tunarungu (output teks)</option>
-                    <option value="tunanetra">Tunanetra (output suara)</option>
+    <!-- Background grid -->
+    <div class="bg-grid" aria-hidden="true"></div>
+
+    <div class="layout">
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🤟</span>
+                <div>
+                    <div class="logo-title">BISINDO</div>
+                    <div class="logo-sub">Penerjemah Isyarat</div>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <button class="nav-item active" data-panel="sign" aria-label="Isyarat Tangan">
+                    <span class="nav-icon">✋</span>
+                    <span>Isyarat</span>
+                </button>
+                <button class="nav-item" data-panel="voice" aria-label="Suara ke Teks">
+                    <span class="nav-icon">🎙️</span>
+                    <span>Suara</span>
+                </button>
+                <button class="nav-item" data-panel="tts" aria-label="Teks ke Suara">
+                    <span class="nav-icon">🔊</span>
+                    <span>TTS</span>
+                </button>
+            </nav>
+
+            <div class="mode-box">
+                <div class="mode-label">Mode Aksesibilitas</div>
+                <select id="mode" class="mode-select">
+                    <option value="tunarungu">👁 Tunarungu (Teks)</option>
+                    <option value="tunanetra">👂 Tunanetra (Suara)</option>
                 </select>
-            </label>
-            <p id="modeHint" class="hint"></p>
-        </section>
-
-        <section class="card">
-            <h2>2) Voice → Text</h2>
-            <div class="row">
-                <button id="btnStartSTT">Mulai Rekam</button>
-                <button id="btnStopSTT" disabled>Stop</button>
+                <div id="modeHint" class="mode-hint"></div>
             </div>
-            <textarea id="sttResult" rows="4" placeholder="Hasil transkrip muncul di sini..."></textarea>
-            <audio id="ttsAudio" controls></audio>
-        </section>
 
-        <section class="card">
-            <h2>3) Bahasa Isyarat → (Text / Suara)</h2>
-            <video id="video" autoplay playsinline></video>
-            <div class="row">
-                <button id="btnStartCam">Aktifkan Kamera</button>
-                <button id="btnStopCam" disabled>Matikan Kamera</button>
+            <div class="status-box" id="statusBox">
+                <div class="status-row">
+                    <span class="dot" id="dotLandmarker"></span>
+                    <span>Hand Landmarker</span>
+                </div>
+                <div class="status-row">
+                    <span class="dot" id="dotModel"></span>
+                    <span>Model BISINDO</span>
+                </div>
             </div>
-            <p class="camOverlay">
-                <strong>Deteksi:</strong> <span id="signResult">-</span>
-                <span id="signConf"></span>
-            </p>
-        </section>
+        </aside>
 
-    </main>
+        <!-- ── MAIN ── -->
+        <main class="main">
+
+            <!-- ── Panel: Sign Language ── -->
+            <section class="panel active" id="panel-sign">
+                <div class="panel-header">
+                    <h1>Deteksi Isyarat <span class="accent">Real-time</span></h1>
+                    <p class="panel-desc">Tunjukkan isyarat tangan BISINDO ke kamera</p>
+                </div>
+
+                <div class="cam-area">
+                    <video id="video" autoplay playsinline muted></video>
+                    <div class="cam-overlay" id="camOverlay">
+                        <span class="cam-placeholder">📷 Kamera belum aktif</span>
+                    </div>
+
+                    <!-- Hasil deteksi floating -->
+                    <div class="detect-badge" id="detectBadge">
+                        <div class="detect-letter" id="signResult">—</div>
+                        <div class="detect-meta">
+                            <span class="detect-conf" id="signConf"></span>
+                            <span class="detect-status" id="signStatus">Menunggu...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cam-controls">
+                    <button id="btnStartCam" class="btn btn-primary">
+                        <span>▶</span> Aktifkan Kamera
+                    </button>
+                    <button id="btnStopCam" class="btn btn-danger" disabled>
+                        <span>■</span> Matikan
+                    </button>
+                    <label class="toggle-row">
+                        <input type="checkbox" id="chkSpeak" checked />
+                        <span class="toggle-label">Ucapkan huruf otomatis</span>
+                    </label>
+                </div>
+
+                <!-- Riwayat huruf -->
+                <div class="history-box">
+                    <div class="history-header">
+                        <span>Riwayat Deteksi</span>
+                        <button class="btn-ghost" id="btnClearHistory">Hapus</button>
+                    </div>
+                    <div class="history-tape" id="historyTape"></div>
+                </div>
+            </section>
+
+            <!-- ── Panel: Voice → Text ── -->
+            <section class="panel" id="panel-voice">
+                <div class="panel-header">
+                    <h1>Suara → <span class="accent">Teks</span></h1>
+                    <p class="panel-desc">Bicara, dan hasil transkripsi muncul di bawah</p>
+                </div>
+
+                <div class="voice-area">
+                    <div class="mic-ring" id="micRing">
+                        <div class="mic-icon">🎙️</div>
+                    </div>
+                    <div class="voice-state" id="voiceState">Siap merekam</div>
+                </div>
+
+                <div class="cam-controls">
+                    <button id="btnStartSTT" class="btn btn-primary">
+                        <span>●</span> Mulai Rekam
+                    </button>
+                    <button id="btnStopSTT" class="btn btn-danger" disabled>
+                        <span>■</span> Stop
+                    </button>
+                </div>
+
+                <div class="result-box">
+                    <div class="result-label">Transkripsi</div>
+                    <textarea id="sttResult" rows="5" placeholder="Hasil transkripsi muncul di sini..."
+                        spellcheck="false"></textarea>
+                    <button class="btn btn-ghost" id="btnReadSTT">🔊 Bacakan</button>
+                </div>
+            </section>
+
+            <!-- ── Panel: TTS ── -->
+            <section class="panel" id="panel-tts">
+                <div class="panel-header">
+                    <h1>Teks → <span class="accent">Suara</span></h1>
+                    <p class="panel-desc">Ketik teks dan dengarkan dalam Bahasa Indonesia</p>
+                </div>
+
+                <div class="result-box">
+                    <div class="result-label">Teks yang ingin dibacakan</div>
+                    <textarea id="ttsInput" rows="5" placeholder="Ketik teks di sini..."></textarea>
+                    <button class="btn btn-primary" id="btnSpeak">
+                        <span>🔊</span> Bacakan
+                    </button>
+                </div>
+
+                <div class="player-box">
+                    <audio id="ttsAudio" controls></audio>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Hidden audio for sign detection -->
+    <audio id="signAudio" style="display:none"></audio>
 
     <script src="/static/app.js"></script>
 </body>
